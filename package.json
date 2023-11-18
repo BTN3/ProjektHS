@@ -47,7 +47,6 @@
   },
   "scripts": {
     "start": "node server.js"
-    
   },
   "eslintConfig": {
     "extends": [

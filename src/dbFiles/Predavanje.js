@@ -1,6 +1,6 @@
 class Predavanje {
 
-    constructor(Predavanje_ID,naziv,tip,opis,brojPolaznika,slobodnaMjesta,ukupnoMjesta){
+    constructor(Predavanje_ID,naziv,tip,opis,brojPolaznika,slobodnaMjesta,ukupnoMjesta,mjestoOdrzavanja,vrijemePocetka){
         brojPolaznika++;
         slobodnaMjesta=ukupnoMjesta--;
         if(slobodnaMjesta<=0){
@@ -13,6 +13,8 @@ class Predavanje {
         this.brojPolaznika=brojPolaznika;
         this.slobodnaMjesta=slobodnaMjesta;
         this.ukupnoMjesta=ukupnoMjesta;
+        this.mjestoOdrzavanja=mjestoOdrzavanja;
+        this.vrijemePocetka=vrijemePocetka
        
         
     }

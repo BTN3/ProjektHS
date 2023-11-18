@@ -48,7 +48,7 @@ const createPsiholog = async (Psiholog) => {
         .input('Sazetci_ID', sql.VarChar(200), Sazetci_ID)
         .input('Psiholog_ID', sql.VarChar(200), Psiholog_ID)
         .input('FileName', sql.NVarChar(255), FileName)
-        .input('FileType', sql.NVarChar(50), FileType)
+        .input('FileType', sql.NVarChar(sql.MAX), FileType)
         .input('FileData', sql.VarBinary(sql.MAX), Buffer.from(FileData, 'hex'))
         .input('OblikSudjelovanja', sql.NVarChar(50), OblikSudjelovanja) // Include OblikSudjelovanja
         .query(query);
@@ -105,7 +105,9 @@ async function fetchSazetciWithPsihologData() {
     `;
 
     const result = await pool.request().query(query);
+    console.log("form db",result.recordset)
     return result.recordset;
+    
   } catch (error) {
     throw error;
   }
@@ -139,6 +141,7 @@ async function fetchSazetciWithPsihologData() {
 const createPredavanje = async (Predavanje) => {
   try {
     let pool = await sql.connect(config);
+    //console.log("sto je undifinded",Pre)
     await pool.request().query(`
       INSERT INTO Predavanja
       VALUES ('${Predavanje.Predavanje_ID}', 
@@ -147,7 +150,10 @@ const createPredavanje = async (Predavanje) => {
               '${Predavanje.opis}',
               ${Predavanje.brojPolaznika},
               ${Predavanje.slobodnaMjesta},
-              ${Predavanje.ukupnoMjesta})
+              ${Predavanje.ukupnoMjesta},
+              '${Predavanje.mjestoOdrzavanja}',
+              '${Predavanje.vrijemePocetka}')
+              
     `);
   } catch (error) {
     console.log(error);
@@ -247,8 +253,8 @@ const getYourOwnPredbiljezbe = async (psihologID) => {
 // // Create Predbiljezba operation gpt sugg
 const createPredbiljezba = async (predbiljezbaID, psihologID, applicationDate, predavanjeIDs) => {
   console.log(predavanjeIDs);
-  const myArray = predavanjeIDs.split(",");
-  console.log(myArray);
+  //const myArray = predavanjeIDs.split(",");
+ // console.log(myArray);
   try {
     let pool = await sql.connect(config);
     
@@ -262,13 +268,13 @@ const createPredbiljezba = async (predbiljezbaID, psihologID, applicationDate, p
     }
 
     // Perform the insert operation for each predavanjeID
-    for (const predavanjeID of myArray) {
-      console.log('Ovo je predavanjeID iz dbOper: ' + predavanjeID);
+    //for (const predavanjeID of myArray) {
+      console.log('Ovo je predavanjeID iz dbOper: ' + predavanjeIDs);
       await pool.request().query(`
         INSERT INTO Predbiljezbe (Predbiljezbe_ID, Psiholog_ID, Vrijeme_predbiljezbe, Predavanje_ID)
-        VALUES ('${predbiljezbaID}', '${psihologID}', '${applicationDate}', '${predavanjeID}')
+        VALUES ('${predbiljezbaID}', '${psihologID}', '${applicationDate}', '${predavanjeIDs}')
       `);
-    }
+  //  }
 
     return true; // Return success status
   } catch (error) {
@@ -283,7 +289,20 @@ const createPredbiljezba = async (predbiljezbaID, psihologID, applicationDate, p
   }
 };
 
+const getUser = async(psihologID) => {
+  try {
+  let pool = await sql.connect(config);
+  const psihologExists = await pool.request().query(`
+      SELECT * FROM EventRegistration2 WHERE Psiholog_ID = '${psihologID}'
+    `);
+    return psihologExists;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+    
 
+};
 const updatePredavanje = async (updatedPredavanje) => {
   try {
     let pool = await sql.connect(config);
@@ -332,5 +351,6 @@ module.exports = {
     getPredavanjeByID,
     createSazetci,
     fetchSazetciWithPsihologData,
-    getYourOwnPredbiljezbe
+    getYourOwnPredbiljezbe,
+    getUser
 }
