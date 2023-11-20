@@ -347,7 +347,7 @@ function sendEmail(userPsiholog) {
        dana ${userPsiholog.date}. Vaša kontakt mail adresa je
        ${userPsiholog.email}. Čuvajte ovu poruku jer se na njoj nalazi i
        token s kojim ćete se kasnije prijavljivati na predavanja. Vaš token
-       za prijavu na predavanja: ${userPsiholog.psiholog_ID}`,
+       za prijavu na predavanja: ${userPsiholog.Psiholog_ID}`,
     };
 
     transporter.sendMail(mailConfigs, (err, info) => {
